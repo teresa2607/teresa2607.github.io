@@ -28,7 +28,7 @@
   }
 
   class SnakeGame {
-    constructor({ canvas, statusEl, scoreEl, bestEl, actionButtons, padButtons }) {
+    constructor({ canvas, statusEl, scoreEl, bestEl, actionButtons, padButtons, onActivate }) {
       this.canvas = canvas;
       this.ctx = canvas.getContext("2d");
       this.statusEl = statusEl;
@@ -36,6 +36,7 @@
       this.bestEl = bestEl;
       this.actionButtons = Array.from(actionButtons || []);
       this.padButtons = Array.from(padButtons || []);
+      this.onActivate = onActivate || null;
       this.timerId = null;
       this.running = false;
       this.paused = false;
@@ -52,7 +53,6 @@
 
     mount() {
       this.bindButtons();
-      this.bindInput();
       this.syncScoreboard();
       this.reset(true);
       this.draw();
@@ -61,6 +61,7 @@
     bindButtons() {
       this.actionButtons.forEach((button) => {
         button.addEventListener("click", () => {
+          if (this.onActivate) this.onActivate();
           const action = button.dataset.action;
           if (action === "start") this.start();
           if (action === "pause") this.togglePause();
@@ -72,6 +73,7 @@
         const direction = button.dataset.dir;
         const handler = (event) => {
           event.preventDefault();
+          if (this.onActivate) this.onActivate();
           this.queueDirection(direction);
           if (!this.running && !this.gameOver) {
             this.start();
@@ -83,40 +85,35 @@
       });
     }
 
-    bindInput() {
-      window.addEventListener("keydown", (event) => {
-        const key = event.key.toLowerCase();
-        if (key === " " || key === "spacebar") {
-          event.preventDefault();
-          if (!this.running) {
-            this.start();
-          } else {
-            this.togglePause();
-          }
-          return;
-        }
-        if (key === "r") {
-          event.preventDefault();
-          this.restart();
-          return;
-        }
-        const mapping = {
-          arrowup: "up",
-          w: "up",
-          arrowdown: "down",
-          s: "down",
-          arrowleft: "left",
-          a: "left",
-          arrowright: "right",
-          d: "right",
-        };
-        if (mapping[key]) {
-          event.preventDefault();
-          this.queueDirection(mapping[key]);
-        }
-      });
-
-      window.addEventListener("resize", () => this.draw());
+    handleKey(key) {
+      const normalized = key.toLowerCase();
+      if (normalized === " " || normalized === "spacebar") {
+        this.start();
+        return true;
+      }
+      if (normalized === "r") {
+        this.restart();
+        return true;
+      }
+      if (normalized === "p") {
+        this.togglePause();
+        return true;
+      }
+      const mapping = {
+        arrowup: "up",
+        w: "up",
+        arrowdown: "down",
+        s: "down",
+        arrowleft: "left",
+        a: "left",
+        arrowright: "right",
+        d: "right",
+      };
+      if (mapping[normalized]) {
+        this.queueDirection(mapping[normalized]);
+        return true;
+      }
+      return false;
     }
 
     reset(keepBest = false) {

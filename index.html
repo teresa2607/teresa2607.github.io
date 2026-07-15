@@ -136,10 +136,10 @@
     <section id="games" class="section">
       <div class="section-heading">
         <p class="eyebrow">Games</p>
-        <h2>Snake / 지렁이 게임</h2>
+        <h2>Snake / 지렁이 게임과 Tetris</h2>
       </div>
 
-      <div class="game-shell">
+      <div class="game-shell is-active" data-game-id="snake" tabindex="0">
         <div class="game-topbar panel">
           <div class="stat">
             <span class="stat-label">상태</span>
@@ -185,6 +185,47 @@
           <button type="button" class="pad-btn right" data-dir="right">▶</button>
         </div>
       </div>
+
+      <div class="game-shell" data-game-id="tetris" tabindex="0">
+        <div class="game-topbar panel">
+          <div class="stat">
+            <span class="stat-label">상태</span>
+            <strong id="tetris-status">대기 중</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">점수</span>
+            <strong id="tetris-score">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">최고 점수</span>
+            <strong id="tetris-best">0</strong>
+          </div>
+        </div>
+
+        <div class="game-layout">
+          <div class="game-canvas-wrap panel">
+            <canvas id="tetris-canvas" width="240" height="480" aria-label="Tetris 게임판" role="img"></canvas>
+          </div>
+
+          <div class="game-panel panel">
+            <h3>조작</h3>
+            <ul class="list">
+              <li>방향키 또는 WASD</li>
+              <li>왼쪽/오른쪽 이동</li>
+              <li>아래로 소프트 드롭</li>
+              <li>위쪽으로 회전</li>
+              <li>스페이스로 하드 드롭</li>
+              <li>P로 일시정지, R로 재시작</li>
+            </ul>
+            <div class="game-actions">
+              <button type="button" class="button primary" data-action="start" data-game="tetris">시작</button>
+              <button type="button" class="button secondary" data-action="pause" data-game="tetris">일시정지</button>
+              <button type="button" class="button secondary" data-action="restart" data-game="tetris">재시작</button>
+            </div>
+            <p class="game-note">방향키는 현재 활성화된 게임으로만 전달됩니다.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="contact" class="section">
@@ -204,6 +245,7 @@
   </footer>
 
   <script src="game.js"></script>
+  <script src="tetris.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
